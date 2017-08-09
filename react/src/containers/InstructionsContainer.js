@@ -10,16 +10,18 @@ class InstructionsContainer
     super(props);
     this.state = {
       stepID: null,
-      data: null
+      data: {
+        supplies: [],
+        directions: []
+      }
     }
     this.setSelectedStep = this.setSelectedStep.bind(this);
-    this.getFetch = this.getFetch.bind(this);
   }
 
-  getFetch() {
-    fetch('http://localhost:4567/api/v1/favorite_things.json')
-      .then((response) => response.json())
-      .then((json) => this.setState({ data: json }))
+  async componentDidMount() {
+    const response = await fetch('http://localhost:4567/api/v1/favorite_things.json')
+    const json = await response.json()
+    this.setState({ data: json })
   }
 
   setSelectedStep(step) {
@@ -27,11 +29,7 @@ class InstructionsContainer
   }
 
   render(){
-    if (!this.state.data) {
-      return(
-        <FetchButton getFetch={this.getFetch}/>
-      )
-    } else {
+    debugger;
     let supplies = this.state.data.supplies
     let directions = this.state.data.directions
 
@@ -47,8 +45,8 @@ class InstructionsContainer
 
     let steps = directions.map(direction => {
       let className;
-      let id = direction.id
-      id == this.state.stepID ? className='selected' : className=null;
+      let id = direction.id;
+      className = (id == this.state.stepID ? 'selected' : null);
 
       return(
         <StepTile
@@ -75,7 +73,6 @@ class InstructionsContainer
         <FetchButton />
       </div>
     )
-  }
   }
 }
 
